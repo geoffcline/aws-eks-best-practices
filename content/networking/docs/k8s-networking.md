@@ -20,3 +20,5 @@ There are many different ways to implement the Kubernetes networking model. One 
 * IPAM (IP Address Management) plugins: which are responsible for allocating and releasing IP addresses for pods as they are created and deleted. Depending on the plugin, this may include one or more interfaces and ranges of IP addresses (CIDRs) to each node, allocate to pods.
 
 The CNI plugin is selected by Kubelet when --network-plugin command-line option is set as CNI. Kubelet reads a file from --cni-conf-dir (default /etc/cni/net.d) and uses the CNI configuration from that file to set up each Pod's network. The CNI configuration file must match the CNI specification (v0.4.0) and any required CNI plugins referenced by the configuration must be present in --cni-bin-dir (default /opt/cni/bin). If there are multiple CNI configuration files in the directory, the kubelet uses the configuration file that comes first by name in lexicographic order.
+
+[[this is fine? but is it necessary?]]

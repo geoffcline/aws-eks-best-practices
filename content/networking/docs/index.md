@@ -30,26 +30,28 @@ The networking modes supported by Amazon VPC CNI can be boradly classified as:
 * Prefix Delegation Mode
 * Security Groups Per Pod
 * Custom Networking
-  
+
+[[are these going to be links?]]
+
 Amazon VPC CNI exposes different setting under each of the modes to accelerate Pod luanch times, and to support Pod churn rates. We will cover these setting under each of the modes and also recommended values for each of the settings.
 
 By default, VPC CNI supports IPv4 cluster networking. However, if you are primarily concerned with resolving the IPv4 exhaustion issue, you can provision cluster in IPv6 mode. Please refer to the following section to understand the distinction between IPv6 support and upstream dual-stack.
 
 ## Understanding IPv6 and Kubernetes Dual-Stack
 
-Kubernetes IPv4/IPv6 dual-stack networking enables the allocation of both IPv4 and IPv6 addresses to Pods and Services. Wherein, EKS’s support for IPv6 is focused on resolving the IP exhaustion problem, which is constrained by the limited size of the IPv4 address space, a significant concern raised by a number of our customers and is distinct from Kubernetes’ “IPv4/IPv6 dual-stack” feature. Amazon EKS doesn't support dual-stacked pods or services. As a result, you can't assign both IPv4 and IPv6 addresses to your pods and services.
+Kubernetes IPv4/IPv6 dual-stack networking enables the allocation of both IPv4 and IPv6 addresses to Pods and Services. EKS takes a different approach compared to Kubernetes’ “IPv4/IPv6 dual-stack” feature. EKS’s support for IPv6 is focused on resolving the IP exhaustion problem due to the limited size of the IPv4 address space. Amazon EKS doesn't support dual-stacked pods or services. As a result, you can't assign both IPv4 and IPv6 addresses to your pods and services.
 
-By default, EKS assigns IPv4 addresses to your Pods and Services. In an IPv6 EKS cluster, pods and services will receive IPv6 addresses. Amazon VPC CNI supports IPv6 in prefix assignment mode and assigns IPv6 address to Pods, while maintaining the ability for legacy IPv4 endpoints to connect to services running on IPv6 clusters, as well as pods connecting to legacy IPv4 endpoints outside the cluster.
+By default, EKS assigns IPv4 addresses to your Pods and Services. In an IPv6 EKS cluster, pods and services will receive IPv6 addresses. Amazon VPC CNI supports IPv6 in prefix assignment mode and assigns IPv6 address to Pods, while maintaining the ability for legacy IPv4 endpoints to connect to services running on IPv6 clusters[[how?]], as well as pods connecting to legacy IPv4 endpoints outside the cluster.
 
 This guide aims to cover the implementation details for IPv6 along with best practices for running and migrating to IPv6 cluster.
 
-## Using Alternate CNI Plugins
+## Understanding Alternate CNI Plugins
 
-AWS VPC CNI plugin is the only officially supported [network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking/) on EKS. VPC CNI provides native integration with AWS VPC and works in Undrelay mode. In Underlay mode, containers and hosts are located at the same network layer and share the same position. Network interconnection between containers depends on the underlying network. Using this plugin allows Kubernetes pods to have the same IP address inside the pod as they do on the VPC network.
+AWS VPC CNI plugin is the only officially supported [network plugin](https://kubernetes.io/docs/concepts/cluster-administration/networking/) on EKS. VPC CNI provides native integration with AWS VPC and works in Underlay mode. In Underlay mode, containers and hosts are located at the same network layer and share the same position. Network interconnection between containers depends on the underlying network. Using this plugin allows Kubernetes pods to have the same IP address inside the pod as they do on the VPC network.
 
 However, since EKS runs upstream Kubernetes and is certified Kubernetes conformant, you can use alternate [CNI plugins](https://github.com/containernetworking/cni). Alternate CNIs works in overlay network mode over Amazon VPC.
 
-An overlay network allows network devices to communicate across an underlying network (referred to as the underlay) without the underlay network having any knowledge of the devices connected to the overlay network. From the point of view of the devices connected to the overlay network, it looks just like a normal network. The overlay network takes a network packet, referred to as the inner packet, and encapsulating it inside an outer network packet. In this way the underlay sees the outer packets without needing to understand how to handle the inner packets. In Overlay mode, a container is independent of the host's IP address range. During cross-host communication, tunnels are established between hosts and all packets in the container CIDR block are encapsulated as packets exchanged between hosts in the underlying physical network. This mode removes the dependency on the underlying network.
+An overlay network allows network devices to communicate across an underlying network without the underlay network having any knowledge of the devices connected to the overlay network. From the point of view of the devices connected to the overlay network, it looks just like a normal network. The overlay network takes a network packet, referred to as the inner packet, and encapsulating it inside an outer network packet. In this way the underlay sees the outer packets without needing to understand how to handle the inner packets. In Overlay mode, a container is independent of the host's IP address range. During cross-host communication, tunnels are established between hosts and all packets in the container CIDR block are encapsulated as packets exchanged between hosts in the underlying physical network. This mode removes the dependency on the underlying network.
 
 How the overlay knows where to send packets varies by overlay type and the protocols they use. For example Weavenet and Flannel provides Layer2 and multicast support vs. Calico which uses BGP to program route tables and avoids packet encapsulation.
 
@@ -65,4 +67,4 @@ Multiple network interfaces for pods are useful in various use cases; examples i
 * Performance: Additional interfaces often leverage specialized hardware specifications such as Single Root I/O Virtualization (SR-IOV) and Data Plane Development Kit (DPDK), which bypass the operating system kernel for increased bandwidth and network performance.
 * Security: Supporting multi-tenant networks with strict traffic isolation requirements. Connecting multiple subnets to pods to meet compliance requirements.
 
-Multus section of this guide covers in detail on how to setup multi-homed Pods and best practices to run them at scale.
+The Multus section of this guide covers in detail on how to setup multi-homed Pods and best practices to run them at scale. [[insert link]]

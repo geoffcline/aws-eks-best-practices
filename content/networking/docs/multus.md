@@ -1,6 +1,6 @@
 # Multus
 
-A CNI is the container network interface that provides an application programming interface to configure network interfaces in containers. The Multus CNI plugin allows pods to have multiple interfaces in Kubernetes. The current version of EKS support for Multus bundles Amazon VPC CNI as the default delegate plugin (which is the only supported and validated default  delegate plugin). The default delegate plugin configures the primary network interface (eth0) for pods to enable Kubernetes control plane traffic, including the IP Address Management (IPAM) for the primary network interface for the pods.
+The Multus CNI plugin allows pods to have multiple interfaces in Kubernetes, known as mult-homed pods. [[link to CNI]] At a high level, Multus coordinates with traditional CNI plugins, such as the Amazon VPC CNI.  EKS only supports the VPC CNI as Multus' default delegate plugin. The default delegate plugin configures the primary network interface (eth0) for pods to enable Kubernetes control plane traffic, including the IP Address Management (IPAM) for the primary network interface for the pods. Alternate CNIs, such as ipvlan [[link]], are used for secondary pod network interfaces.
 
 Here’s an example of how multi-homed pods can work on AWS. The image below shows two pods with two network interfaces, eth0 and net1. In both cases, the Amazon VPC CNI manages the pod eth0 (default Multus delegate). Interface net1 is managed by Multus via the ipvlan CNI plugin for pod1, which handles the user plane (eg: voice, video) traffic separated from the k8 control plane traffic. Where as pod2 net1 gets connected to the host elastic network interface through the host-device CNI plugin, and enables DPDK to accelerate the packet processing.
 
@@ -8,17 +8,17 @@ Here’s an example of how multi-homed pods can work on AWS. The image below sho
 
 ## Deploying Multus
 
-EKS officially support Multus CNI. In Amazon EKS, each pod has one network interface assigned by the Amazon VPC CNI plugin. With Multus, you can create a multi-homed pod that has multiple interfaces with Multus acting as a "meta-plugin"; a CNI plugin that can call multiple other CNI plugins. AWS support for Multus comes configured with the Amazon VPC CNI plugin as the default delegate plugin.
+EKS officially supports Multus CNI. In Amazon EKS, each pod has one network interface assigned by the Amazon VPC CNI plugin. With Multus, you can create a multi-homed pod that has multiple interfaces with Multus acting as a "meta-plugin" -- a CNI plugin that can call multiple other CNI plugins. AWS support for Multus comes configured with the Amazon VPC CNI plugin as the default delegate plugin. [[good]]
 
 !!!info
 
 - Multus has been evaluated with IPVLAN CNI (both layer 2 and layer 3 modes) in region and and on local zones. AWS VPC does not support macvlan CNI; hence, macvlan cannot be used with Multus.
-- AWS supports DPDK via a host-device CNI plugin. For configuration choices, please refer to the section supporting DPDK on AWS.
+- AWS supports DPDK via a host-device CNI plugin [[links]]. For configuration choices, please refer to the section supporting DPDK on AWS.
 
 !!!warning
 
 - AWS will not provide support for all compatible CNI plugins that can be chained, or for any issues that may emerge in these CNI plugins that are unrelated to the chaining setup.
-- Multus is only supported when using the Amazon VPC CNI as the primary CNI. We do not support the Amazon VPC CNI when used for higher order interfaces, secondary or otherwise.
+- Multus is only supported when using the Amazon VPC CNI as the primary CNI. We do not support the Amazon VPC CNI when used for secondary interfaces.
 
 ### Automation through CloudFormation, LifeCycle Hook, CloudWatch Event, and Lambda
 
@@ -30,13 +30,17 @@ For an implementation walk through, see the [Multus Setup Guide](https://github.
 
 AWS's support for Multus comprises support and life cycle management for the Multus plugin, but it is not responsible for the IP address or management of additional network interfaces. IPAM requirements vary based on customer requirements. Some of our telecommunications carriers employ [whereabouts](https://github.com/k8snetworkplumbingwg/whereabouts), an IP Address Management (IPAM) CNI plugin that assigns cluster-wide IP addresses. If you do not have a requirement for cluster-wide IPAM, you may wish to consider host-local or static IPAM.
 
-IPAM plugins such as static, whereabouts, and host-local supply IP addresses, but do not make these secondary interface IPs routable in the VPC network, hence preventing pods from being routed via Multus interfaces. In other words, AWS VPC is unaware of the IP addresses maintained by these third-party IPAMs; therefore, these IPs must be added manually as secondary IPs on an ENI managed by Multus. Each ENI linked to an EC2 Worker node must have the IP address(es) assigned. We advise utilizing an automated solution using either a sidecar or init-car strategy. You can find a sample implementation here: [https://github.com/aws-samples/eks-automated-ipmgmt-multus-pods](https://github.com/aws-samples/eks-automated-ipmgmt-multus-pods).
+IPAM plugins such as static, whereabouts, and host-local supply IP addresses, but do not make these secondary interface IPs routable in the VPC network, hence preventing pods from being routed via Multus interfaces. In other words, AWS VPC is unaware of the IP addresses maintained by these third-party IPAMs; therefore, these IPs must be added manually as secondary IPs on an ENI managed by Multus. Each ENI linked to an EC2 Worker node must have the IP address(es) assigned. We advise utilizing an automated solution using either a sidecar or init-car strategy. You can find a sample implementation here: [https://github.com/aws-samples/eks-automated-ipmgmt-multus-pods](https://github.com/aws-samples/eks-automated-ipmgmt-multus-pods). 
 
 ## Recommendations
 
 ### Multus with DPDK interface (host-device CNI)
 
-We recommend using host-device CNI intead of using ipvlan CNI in the case where pod requires to have secondary interface as DPDK ENA interface. For DPDK interface, it is highly recommended to use Nitro instances (C5/M5) with ENA driver for workernode group. You will still use automation through CloudFormation, LifeCycle Hook, CloudWatch Event, and Lambda to configure multiple ENIs on a worker node.
+If using the DPDK[[link]], configure multus to use the host-device CNI (intead of ipvlan CNI) for secondary interfaces. More specifically, pods requiring a DPDK ENA interface should use host-device CNI. 
+
+Further, use a Nitro instance (C5/M5) with the [[a?]] ENA driver for workernode group. 
+
+You will still use automation through CloudFormation, LifeCycle Hook, CloudWatch Event, and Lambda to configure multiple ENIs on a worker node.
 
 > **_NOTE:_** The version of /opt/cni/bin/host-device should be higher than [0.8.6 in the workernode] (https://github.com/awslabs/amazon-eks-ami/pull/496), in order to use the pciBudID parameter. Please check the CNI plugin version in advance. The current EKS optimized AMI (1.18) already has an updated version of host-device CNI (0.8.6).
 
@@ -137,6 +141,8 @@ cd usertools/ ./dpdk-setup.sh
 ```
 
 ### Using SRIOV Device Plugin
+
+[[why use this instead?]]
 
 Another recommended way to use DPDK is via the SRIOV device plugin. You can also use the [SRIOV Device Plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin) to use an ENI resource as a SRIOV resource pool. You can follow the steps mentioned below to install the SR-IOV Device Plugin (sriov-dp) for the image used to run a daemonset.
 
