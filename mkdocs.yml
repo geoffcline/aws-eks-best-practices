@@ -90,5 +90,4 @@ plugins:
   - search
 extra:
   analytics:
-    provider: google
-    property: G-VQGL8B2FH8
+    provider: custom
