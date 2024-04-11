@@ -384,7 +384,7 @@ If the resource type is staying the same but API version needs to be updated you
 
 ## Configure PodDisruptionBudgets and topologySpreadConstraints to ensure availability of your workloads while the data plane is upgraded
 
-Ensure your workloads have the proper [PodDisruptionBudgets](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets) and [topologySpreadConstraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints) to ensure availability of your workloads while the data plane is upgraded. Not every workload requires the same level of availability so you need to validate the scale and requirements of your workload.
+Ensure your workloads have the proper https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets[PodDisruptionBudgets] and https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints[topologySpreadConstraints] to ensure availability of your workloads while the data plane is upgraded. Not every workload requires the same level of availability so you need to validate the scale and requirements of your workload.
 
 Make sure workloads are spread in multiple Availability Zones and on multiple hosts with topology spreads will give a higher level of confidence that workloads will migrate to the new data plane automatically without incident. 
 
