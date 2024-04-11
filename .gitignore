@@ -5,6 +5,7 @@
 *.DS_Store
 *.aws-oxygen
 .attach_pid*
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
