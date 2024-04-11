@@ -24,7 +24,7 @@ This guide shows cluster administrators how to plan and execute their Amazon EKS
 
 ## Overview
 
-A Kubernetes version encompasses both the control plane and the data plane. To ensure smooth operation, both the control plane and the data plane should run the same [Kubernetes minor version, such as 1.24](https://kubernetes.io/releases/version-skew-policy/#supported-versions). While AWS manages and upgrades the control plane, updating the worker nodes in the data plane is your responsibility.
+A Kubernetes version encompasses both the control plane and the data plane. To ensure smooth operation, both the control plane and the data plane should run the same https://kubernetes.io/releases/version-skew-policy/#supported-versions[Kubernetes minor version, such as 1.24]. While AWS manages and upgrades the control plane, updating the worker nodes in the data plane is your responsibility.
 
 * **Control plane** — The version of the control plane is determined by the Kubernetes API server. In Amazon EKS clusters, AWS takes care of managing this component. Control plane upgrades can be initiated via the AWS API. 
 * **Data plane** — The data plane version is associated with the Kubelet versions running on your individual nodes. It's possible to have nodes in the same cluster running different versions. You can check the versions of all nodes by running `kubectl get nodes`.
@@ -33,31 +33,31 @@ A Kubernetes version encompasses both the control plane and the data plane. To e
 
 If you're planning to upgrade your Kubernetes version in Amazon EKS, there are a few important policies, tools, and procedures you should put in place before starting an upgrade. 
 
-* **Understand Deprecation Policies** — Gain a deep understanding of how the  [Kubernetes deprecation policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/) works. Be aware of any upcoming changes that may affect your existing applications. Newer versions of Kubernetes often phase out certain APIs and features, potentially causing issues for running applications.
-* **Review Kubernetes Change Log** — Thoroughly review the [Kubernetes change log](https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG) alongside [Amazon EKS Kubernetes versions](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) to understand any possible impact to your cluster, such as breaking changes that may affect your workloads.
-* **Assess Cluster Add-Ons Compatibility** — Amazon EKS doesn't automatically update an add-on when new versions are released or after you update your cluster to a new Kubernetes minor version. Review [Updating an add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-add-ons.html#updating-an-add-on) to understand the compatibility of any existing cluster add-ons with the cluster version you intend to upgrade to.
-* **Enable Control Plane Logging** — Enable [control plane logging](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) to capture logs, errors, or issues that can arise during the upgrade process. Consider reviewing these logs for any anomalies. Test cluster upgrades in a non-production environment, or integrate automated tests into your continuous integration workflow to assess version compatibility with your applications, controllers, and custom integrations.
-* **Explore eksctl for Cluster Management** — Consider using [eksctl](https://eksctl.io/) to manage your EKS cluster. It provides you with the ability to [update the control plane, manage add-ons, and handle worker node updates](https://eksctl.io/usage/cluster-upgrade/) out-of-the-box. 
-* **Opt for Managed Node Groups or EKS on Fargate** — Streamline and automate worker node upgrades by using [EKS managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html) or [EKS on Fargate](https://docs.aws.amazon.com/eks/latest/userguide/fargate.html). These options simplify the process and reduce manual intervention.
-* **Utilize kubectl Convert Plugin** — Leverage the [kubectl convert plugin](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin) to facilitate the [conversion of Kubernetes manifest files](https://kubernetes.io/docs/tasks/tools/included/kubectl-convert-overview/) between different API versions. This can help ensure that your configurations remain compatible with the new Kubernetes version.
+* **Understand Deprecation Policies** — Gain a deep understanding of how the  https://kubernetes.io/docs/reference/using-api/deprecation-policy/[Kubernetes deprecation policy] works. Be aware of any upcoming changes that may affect your existing applications. Newer versions of Kubernetes often phase out certain APIs and features, potentially causing issues for running applications.
+* **Review Kubernetes Change Log** — Thoroughly review the https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG[Kubernetes change log] alongside https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html[Amazon EKS Kubernetes versions] to understand any possible impact to your cluster, such as breaking changes that may affect your workloads.
+* **Assess Cluster Add-Ons Compatibility** — Amazon EKS doesn't automatically update an add-on when new versions are released or after you update your cluster to a new Kubernetes minor version. Review https://docs.aws.amazon.com/eks/latest/userguide/managing-add-ons.html#updating-an-add-on[Updating an add-on] to understand the compatibility of any existing cluster add-ons with the cluster version you intend to upgrade to.
+* **Enable Control Plane Logging** — Enable https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html[control plane logging] to capture logs, errors, or issues that can arise during the upgrade process. Consider reviewing these logs for any anomalies. Test cluster upgrades in a non-production environment, or integrate automated tests into your continuous integration workflow to assess version compatibility with your applications, controllers, and custom integrations.
+* **Explore eksctl for Cluster Management** — Consider using https://eksctl.io/[eksctl] to manage your EKS cluster. It provides you with the ability to https://eksctl.io/usage/cluster-upgrade/[update the control plane, manage add-ons, and handle worker node updates] out-of-the-box. 
+* **Opt for Managed Node Groups or EKS on Fargate** — Streamline and automate worker node upgrades by using https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html[EKS managed node groups] or https://docs.aws.amazon.com/eks/latest/userguide/fargate.html[EKS on Fargate]. These options simplify the process and reduce manual intervention.
+* **Utilize kubectl Convert Plugin** — Leverage the https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin[kubectl convert plugin] to facilitate the https://kubernetes.io/docs/tasks/tools/included/kubectl-convert-overview/[conversion of Kubernetes manifest files] between different API versions. This can help ensure that your configurations remain compatible with the new Kubernetes version.
 
 ## Keep your cluster up-to-date
 
 Staying current with Kubernetes updates is paramount for a secure and efficient EKS environment, reflecting the shared responsibility model in Amazon EKS. By integrating these strategies into your operational workflow, you're positioning yourself to maintain up-to-date, secure clusters that take full advantage of the latest features and improvements. Tactics:
 
-* **Supported Version Policy** — Aligned with the Kubernetes community, Amazon EKS typically provides three active Kubernetes versions while deprecating a fourth version each year. Deprecation notices are issued at least 60 days before a version reaches its end-of-support date. For more details, refer to the [EKS Version FAQ](https://aws.amazon.com/eks/eks-version-faq/).
-* **Auto-Upgrade Policy** — We strongly recommend staying in sync with Kubernetes updates in your EKS cluster. Kubernetes community support, including bug fixes and security patches, typically ceases for versions older than one year. Deprecated versions may also lack vulnerability reporting, posing a potential risk. Failure to proactively upgrade before a version's end-of-life triggers an automatic upgrade, which could disrupt your workloads and systems. For additional information, consult the [EKS Version Support Policy](https://aws.amazon.com/eks/eks-version-support-policy/).
+* **Supported Version Policy** — Aligned with the Kubernetes community, Amazon EKS typically provides three active Kubernetes versions while deprecating a fourth version each year. Deprecation notices are issued at least 60 days before a version reaches its end-of-support date. For more details, refer to the https://aws.amazon.com/eks/eks-version-faq/[EKS Version FAQ].
+* **Auto-Upgrade Policy** — We strongly recommend staying in sync with Kubernetes updates in your EKS cluster. Kubernetes community support, including bug fixes and security patches, typically ceases for versions older than one year. Deprecated versions may also lack vulnerability reporting, posing a potential risk. Failure to proactively upgrade before a version's end-of-life triggers an automatic upgrade, which could disrupt your workloads and systems. For additional information, consult the https://aws.amazon.com/eks/eks-version-support-policy/[EKS Version Support Policy].
 * **Create Upgrade Runbooks** — Establish a well-documented process for managing upgrades. As part of your proactive approach, develop runbooks and specialized tools tailored to your upgrade process. This not only enhances your preparedness but also simplifies complex transitions. Make it a standard practice to upgrade your clusters at least once a year. This practice aligns you with ongoing technological advancements, thereby boosting the efficiency and security of your environment.
 
 ## Review the EKS release calendar
 
-[Review the EKS Kubernetes release calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar) to learn when new versions are coming, and when support for specific versions end. Generally, EKS releases three minor versions of Kubernetes annually, and each minor version is supported for about 14 months. 
+https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar[Review the EKS Kubernetes release calendar] to learn when new versions are coming, and when support for specific versions end. Generally, EKS releases three minor versions of Kubernetes annually, and each minor version is supported for about 14 months. 
 
-Additionally, review the upstream [Kubernetes release information](https://kubernetes.io/releases/).
+Additionally, review the upstream https://kubernetes.io/releases/[Kubernetes release information].
 
 ## Understand how the shared responsibility model applies to cluster upgrades
 
-You are responsible for initiating upgrade for both cluster control plane as well as the data plane. [Learn how to initiate an upgrade.](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html) When you initiate a cluster upgrade, AWS manages upgrading the cluster control plane. You are responsible for upgrading the data plane, including Fargate pods and [other add-ons.](#upgrade-add-ons-and-components-using-the-kubernetes-api) You must validate and plan upgrades for workloads running on your cluster to ensure their availability and operations are not impacted after cluster upgrade
+You are responsible for initiating upgrade for both cluster control plane as well as the data plane. https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html[Learn how to initiate an upgrade.] When you initiate a cluster upgrade, AWS manages upgrading the cluster control plane. You are responsible for upgrading the data plane, including Fargate pods and [other add-ons.](#upgrade-add-ons-and-components-using-the-kubernetes-api) You must validate and plan upgrades for workloads running on your cluster to ensure their availability and operations are not impacted after cluster upgrade
 
 ## Upgrade clusters in-place
 
@@ -75,27 +75,27 @@ To upgrade a cluster you will need to take the following actions:
 2. [Take a backup of the cluster. (optional)](#backup-the-cluster-before-upgrading)
 3. [Identify and remediate deprecated and removed API usage in your workloads.](#identify-and-remediate-removed-api-usage-before-upgrading-the-control-plane)
 4. [Ensure Managed Node Groups, if used, are on the same Kubernetes version as the control plane.](#track-the-version-skew-of-nodes-ensure-managed-node-groups-are-on-the-same-version-as-the-control-plane-before-upgrading) EKS managed node groups and nodes created by EKS Fargate Profiles only support 1 minor version skew between the control plane and data plane.
-5. [Upgrade the cluster control plane using the AWS console or cli.](https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html)
+5. https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html[Upgrade the cluster control plane using the AWS console or cli.]
 6. [Review add-on compatibility.](#upgrade-add-ons-and-components-using-the-kubernetes-api) Upgrade your Kubernetes add-ons and custom controllers, as required. 
-7. [Update kubectl.](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
-8. [Upgrade the cluster data plane.](https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html)  Upgrade your nodes to the same Kubernetes minor version as your upgraded cluster. 
+7. https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html[Update kubectl.]
+8. https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html[Upgrade the cluster data plane.]  Upgrade your nodes to the same Kubernetes minor version as your upgraded cluster. 
 
 ## Use the EKS Documentation to create an upgrade checklist
 
-The EKS Kubernetes [version documentation](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html) includes a detailed list of changes for each version. Build a checklist for each upgrade. 
+The EKS Kubernetes https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html[version documentation] includes a detailed list of changes for each version. Build a checklist for each upgrade. 
 
 For specific EKS version upgrade guidance, review the documentation for notable changes and considerations for each version.
 
-* [EKS 1.27](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.27)
-* [EKS 1.26](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.26)
-* [EKS 1.25](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.25)
-* [EKS 1.24](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.24)
-* [EKS 1.23](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.23)
-* [EKS 1.22](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.22)
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.27[EKS 1.27]
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.26[EKS 1.26]
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.25[EKS 1.25]
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.24[EKS 1.24]
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.23[EKS 1.23]
+* https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-1.22[EKS 1.22]
 
 ## Upgrade add-ons and components using the Kubernetes API
 
-Before you upgrade a cluster, you should understand what versions of Kubernetes components you are using. Inventory cluster components, and identify components that use the Kubernetes API directly. This includes critical cluster components such as monitoring and logging agents, cluster autoscalers, container storage drivers (e.g. [EBS CSI](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html), [EFS CSI](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html)), ingress controllers, and any other workloads or add-ons that rely on the Kubernetes API directly. 
+Before you upgrade a cluster, you should understand what versions of Kubernetes components you are using. Inventory cluster components, and identify components that use the Kubernetes API directly. This includes critical cluster components such as monitoring and logging agents, cluster autoscalers, container storage drivers (e.g. https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html[EBS CSI], https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html[EFS CSI]), ingress controllers, and any other workloads or add-ons that rely on the Kubernetes API directly. 
 
 !!! tip
     Critical cluster components are often installed in a `*-system` namespace
@@ -104,21 +104,21 @@ Before you upgrade a cluster, you should understand what versions of Kubernetes 
     kubectl get ns | grep '-system'
     ```
 
-Once you have identified components that rely the Kubernetes API, check their documentation for version compatibility and upgrade requirements. For example, see the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/) documentation for version compatibility. Some components may need to be upgraded or configuration changed before proceeding with a cluster upgrade. Some critical components to check include [CoreDNS](https://github.com/coredns/coredns), [kube-proxy](https://kubernetes.io/docs/concepts/overview/components/#kube-proxy), [VPC CNI](https://github.com/aws/amazon-vpc-cni-k8s), and storage drivers. 
+Once you have identified components that rely the Kubernetes API, check their documentation for version compatibility and upgrade requirements. For example, see the https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.4/deploy/installation/[AWS Load Balancer Controller] documentation for version compatibility. Some components may need to be upgraded or configuration changed before proceeding with a cluster upgrade. Some critical components to check include https://github.com/coredns/coredns[CoreDNS], https://kubernetes.io/docs/concepts/overview/components/#kube-proxy[kube-proxy], https://github.com/aws/amazon-vpc-cni-k8s[VPC CNI], and storage drivers. 
 
 Clusters often contain many workloads that use the Kubernetes API and are required for workload functionality such as ingress controllers, continuous delivery systems, and monitoring tools. When you upgrade an EKS cluster, you must also upgrade your add-ons and third-party tools to make sure they are compatible.
  
 See the following examples of common add-ons and their relevant upgrade documentation:
 
-* **Amazon VPC CNI:** For the recommended version of the Amazon VPC CNI add-on for each cluster version, see [Updating the Amazon VPC CNI plugin for Kubernetes self-managed add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html). **When installed as an Amazon EKS Add-on, it can only be upgraded one minor version at a time.**
-* **kube-proxy:** See [Updating the Kubernetes kube-proxy self-managed add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html).
-* **CoreDNS:** See [Updating the CoreDNS self-managed add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html).
-* **AWS Load Balancer Controller:** The AWS Load Balancer Controller needs to be compatible with the EKS version you have deployed. See the [installation guide](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) for more information. 
-* **Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver:** For installation and upgrade information, see [Managing the Amazon EBS CSI driver as an Amazon EKS add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html).
-* **Amazon Elastic File System (Amazon EFS) Container Storage Interface (CSI) driver:** For installation and upgrade information, see [Amazon EFS CSI driver](https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html).
-* **Kubernetes Metrics Server:** For more information, see [metrics-server](https://kubernetes-sigs.github.io/metrics-server/) on GitHub.
-* **Kubernetes Cluster Autoscaler****:** To upgrade the version of Kubernetes Cluster Autoscaler, change the version of the image in the deployment. The Cluster Autoscaler is tightly coupled with the Kubernetes scheduler. You will always need to upgrade it when you upgrade the cluster. Review the [GitHub releases](https://github.com/kubernetes/autoscaler/releases) to find the address of the latest release corresponding to your Kubernetes minor version.
-* **Karpenter:** For installation and upgrade information, see the [Karpenter documentation.](https://karpenter.sh/docs/upgrading/)
+* **Amazon VPC CNI:** For the recommended version of the Amazon VPC CNI add-on for each cluster version, see https://docs.aws.amazon.com/eks/latest/userguide/managing-vpc-cni.html[Updating the Amazon VPC CNI plugin for Kubernetes self-managed add-on]. **When installed as an Amazon EKS Add-on, it can only be upgraded one minor version at a time.**
+* **kube-proxy:** See https://docs.aws.amazon.com/eks/latest/userguide/managing-kube-proxy.html[Updating the Kubernetes kube-proxy self-managed add-on].
+* **CoreDNS:** See https://docs.aws.amazon.com/eks/latest/userguide/managing-coredns.html[Updating the CoreDNS self-managed add-on].
+* **AWS Load Balancer Controller:** The AWS Load Balancer Controller needs to be compatible with the EKS version you have deployed. See the https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html[installation guide] for more information. 
+* **Amazon Elastic Block Store (Amazon EBS) Container Storage Interface (CSI) driver:** For installation and upgrade information, see https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html[Managing the Amazon EBS CSI driver as an Amazon EKS add-on].
+* **Amazon Elastic File System (Amazon EFS) Container Storage Interface (CSI) driver:** For installation and upgrade information, see https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html[Amazon EFS CSI driver].
+* **Kubernetes Metrics Server:** For more information, see https://kubernetes-sigs.github.io/metrics-server/[metrics-server] on GitHub.
+* **Kubernetes Cluster Autoscaler****:** To upgrade the version of Kubernetes Cluster Autoscaler, change the version of the image in the deployment. The Cluster Autoscaler is tightly coupled with the Kubernetes scheduler. You will always need to upgrade it when you upgrade the cluster. Review the https://github.com/kubernetes/autoscaler/releases[GitHub releases] to find the address of the latest release corresponding to your Kubernetes minor version.
+* **Karpenter:** For installation and upgrade information, see the https://karpenter.sh/docs/upgrading/[Karpenter documentation.]
 
 ## Verify basic EKS requirements before upgrading
 
@@ -153,7 +153,7 @@ aws ec2 describe-subnets --subnet-ids \
 +---------------------------+--------------+-------+
 ```
 
-The [VPC CNI Metrics Helper](https://github.com/aws/amazon-vpc-cni-k8s/blob/master/cmd/cni-metrics-helper/README.md) may be used to create a CloudWatch dashboard for VPC metrics. 
+The https://github.com/aws/amazon-vpc-cni-k8s/blob/master/cmd/cni-metrics-helper/README.md[VPC CNI Metrics Helper] may be used to create a CloudWatch dashboard for VPC metrics. 
 Amazon EKS recommends updating the cluster subnets using the "UpdateClusterConfiguration" API prior to beginning a Kubernetes version upgrade if you are running out of IP addresses in the subnets initially specified during cluster creation. Please verify that the new subnets you will be provided:
 
 * belong to same set of AZs that are selected during cluster creation. 
@@ -211,9 +211,9 @@ aws eks list-addons --cluster-name <cluster name>
     * You are responsible for selecting a compatible version from all available versions. [Review the guidance on add-on version compatibility.](#upgrade-add-ons-and-components-using-the-kubernetes-api)
     * Amazon EKS Add-ons may only be upgraded one minor version at a time. 
 
-[Learn more about what components are available as EKS Add-ons, and how to get started.](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)
+https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html[Learn more about what components are available as EKS Add-ons, and how to get started.]
 
-[Learn how to supply a custom configuration to an EKS Add-on.](https://aws.amazon.com/blogs/containers/amazon-eks-add-ons-advanced-configuration/)
+https://aws.amazon.com/blogs/containers/amazon-eks-add-ons-advanced-configuration/[Learn how to supply a custom configuration to an EKS Add-on.]
 
 ## Identify and remediate removed API usage before upgrading the control plane
 
@@ -221,10 +221,10 @@ You should identify API usage of removed APIs before upgrading your EKS control 
 
 Running the check against static manifest files is generally more accurate. If run against live clusters, these tools may return false positives. 
 
-A deprecated Kubernetes API does not mean the API has been removed. You should check the [Kubernetes Deprecation Policy](https://kubernetes.io/docs/reference/using-api/deprecation-policy/) to understand how API removal affects your workloads.
+A deprecated Kubernetes API does not mean the API has been removed. You should check the https://kubernetes.io/docs/reference/using-api/deprecation-policy/[Kubernetes Deprecation Policy] to understand how API removal affects your workloads.
 
 ### Cluster Insights
-[Cluster Insights](https://docs.aws.amazon.com/eks/latest/userguide/cluster-insights.html) is a feature that provides findings on issues that may impact the ability to upgrade an EKS cluster to newer versions of Kubernetes. These findings are curated and managed by Amazon EKS and offer recommendations on how to remediate them. By leveraging Cluster Insights, you can minimize the effort spent to upgrade to newer Kubernetes versions.
+https://docs.aws.amazon.com/eks/latest/userguide/cluster-insights.html[Cluster Insights] is a feature that provides findings on issues that may impact the ability to upgrade an EKS cluster to newer versions of Kubernetes. These findings are curated and managed by Amazon EKS and offer recommendations on how to remediate them. By leveraging Cluster Insights, you can minimize the effort spent to upgrade to newer Kubernetes versions.
 
 To view insights of an EKS cluster, you can run the command:
 ```
@@ -254,7 +254,7 @@ For a more descriptive output about the insight received, you can run the comman
 aws eks describe-insight --region <region-code> --id <insight-id> --cluster-name <my-cluster>
 ```
 
-You also have the option to view insights in the [Amazon EKS Console](https://console.aws.amazon.com/eks/home#/clusters). After selecting your cluster from the cluster list, insight findings are located under the ```Upgrade Insights``` tab.
+You also have the option to view insights in the https://console.aws.amazon.com/eks/home#/clusters[Amazon EKS Console]. After selecting your cluster from the cluster list, insight findings are located under the ```Upgrade Insights``` tab.
 
 If you find a cluster insight with `"status": ERROR`, you must address the issue prior to performing the cluster upgrade. Run the `aws eks describe-insight` command which will share the following remediation advice: 
 
@@ -289,12 +289,12 @@ Recommended action to take:
 ```
 
 Utilizing cluster insights through the EKS Console or CLI help speed the process of successfully upgrading EKS cluster versions. Learn more with the following resources:
-* [Official EKS Docs](https://docs.aws.amazon.com/eks/latest/userguide/cluster-insights.html)
-* [Cluster Insights launch blog](https://aws.amazon.com/blogs/containers/accelerate-the-testing-and-verification-of-amazon-eks-upgrades-with-upgrade-insights/).
+* https://docs.aws.amazon.com/eks/latest/userguide/cluster-insights.html[Official EKS Docs]
+* https://aws.amazon.com/blogs/containers/accelerate-the-testing-and-verification-of-amazon-eks-upgrades-with-upgrade-insights/[Cluster Insights launch blog].
 
 ### Kube-no-trouble
 
-[Kube-no-trouble](https://github.com/doitintl/kube-no-trouble) is an open source command line utility with the command `kubent`. When you run `kubent` without any arguments it will use your current KubeConfig context and scan the cluster and print a report with what APIs will be deprecated and removed. 
+https://github.com/doitintl/kube-no-trouble[Kube-no-trouble] is an open source command line utility with the command `kubent`. When you run `kubent` without any arguments it will use your current KubeConfig context and scan the cluster and print a report with what APIs will be deprecated and removed. 
 
 ```
 kubent
@@ -320,11 +320,11 @@ PodSecurityPolicy   <undefined>   eks.privileged   policy/v1beta1   <removed> (1
 
 It can also be used to scan static manifest files and helm packages. It is recommended to run `kubent` as part of a continuous integration (CI) process to identify issues before manifests are deployed. Scanning manifests is also more accurate than scanning live clusters. 
 
-Kube-no-trouble provides a sample [Service Account and Role](https://github.com/doitintl/kube-no-trouble/blob/master/docs/k8s-sa-and-role-example.yaml) with the appropriate permissions for scanning the cluster. 
+Kube-no-trouble provides a sample https://github.com/doitintl/kube-no-trouble/blob/master/docs/k8s-sa-and-role-example.yaml[Service Account and Role] with the appropriate permissions for scanning the cluster. 
 
 ### Pluto
 
-Another option is [pluto](https://pluto.docs.fairwinds.com/) which is similar to `kubent` because it supports scanning a live cluster, manifest files, helm charts and has a GitHub Action you can include in your CI process.
+Another option is https://pluto.docs.fairwinds.com/[pluto] which is similar to `kubent` because it supports scanning a live cluster, manifest files, helm charts and has a GitHub Action you can include in your CI process.
 
 ```
 pluto detect-all-in-cluster
@@ -345,7 +345,7 @@ kubectl get --raw /metrics | grep apiserver_requested_deprecated_apis
 apiserver_requested_deprecated_apis{group="policy",removed_release="1.25",resource="podsecuritypolicies",subresource="",version="v1beta1"} 1
 ```
 
-* events in the [audit logs](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) with `k8s.io/deprecated` set to `true`:
+* events in the https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html[audit logs] with `k8s.io/deprecated` set to `true`:
 
 ```
 CLUSTER="<cluster_name>"
@@ -378,7 +378,7 @@ Which will output lines if deprecated APIs are in use:
 
 After you have identified what workloads and manifests need to be updated, you may need to change the resource type in your manifest files (e.g. PodSecurityPolicies to PodSecurityStandards). This will require updating the resource specification and additional research depending on what resource is being replaced.
 
-If the resource type is staying the same but API version needs to be updated you can use the `kubectl-convert` command to automatically convert your manifest files.  For example, to convert an older Deployment to `apps/v1`. For more information, see [Install kubectl convert plugin](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin)on the Kubernetes website.
+If the resource type is staying the same but API version needs to be updated you can use the `kubectl-convert` command to automatically convert your manifest files.  For example, to convert an older Deployment to `apps/v1`. For more information, see https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-convert-plugin[Install kubectl convert plugin]on the Kubernetes website.
 
 `kubectl-convert -f <file> --output-version <group>/<version>`
 
@@ -437,7 +437,7 @@ spec:
         whenUnsatisfiable: DoNotSchedule
 ```
 
-[AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) has added Amazon Elastic Kubernetes Service (Amazon EKS) as a supported resource. Resilience Hub provides a single place to define, validate, and track the resilience of your applications so that you can avoid unnecessary downtime caused by software, infrastructure, or operational disruptions.
+https://aws.amazon.com/resilience-hub/[AWS Resilience Hub] has added Amazon Elastic Kubernetes Service (Amazon EKS) as a supported resource. Resilience Hub provides a single place to define, validate, and track the resilience of your applications so that you can avoid unnecessary downtime caused by software, infrastructure, or operational disruptions.
 
 ## Use Managed Node Groups or Karpenter to simplify data plane upgrades
 
@@ -447,46 +447,46 @@ Managed node groups automate the provisioning and lifecycle management of nodes.
 
 In the default configuration, Karpenter automatically creates new nodes using the latest compatible EKS Optimized AMI. As EKS releases updated EKS Optimized AMIs or the cluster is upgraded, Karpenter will automatically start using these images. [Karpenter also implements Node Expiry to update nodes.](#enable-node-expiry-for-karpenter-managed-nodes)
 
-[Karpenter can be configured to use custom AMIs.](https://karpenter.sh/docs/concepts/nodeclasses/) If you use custom AMIs with Karpenter, you are responsible for the version of kubelet. 
+https://karpenter.sh/docs/concepts/nodeclasses/[Karpenter can be configured to use custom AMIs.] If you use custom AMIs with Karpenter, you are responsible for the version of kubelet. 
 
 ## Confirm version compatibility with existing nodes and the control plane
 
 Before proceeding with a Kubernetes upgrade in Amazon EKS, it's vital to ensure compatibility between your managed node groups, self-managed nodes, and the control plane. Compatibility is determined by the Kubernetes version you are using, and it varies based on different scenarios. Tactics:
 
-* **Kubernetes v1.28+** — **** Starting from Kubernetes version 1.28 and onwards, there's a more lenient version policy for core components. Specifically, the supported skew between the Kubernetes API server and the kubelet has been extended by one minor version, going from n-2 to n-3. For example, if your EKS control plane version is 1.28, you can safely use kubelet versions as old as 1.25. This version skew is supported across [AWS Fargate](https://docs.aws.amazon.com/eks/latest/userguide/fargate.html), [managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html), and [self-managed nodes](https://docs.aws.amazon.com/eks/latest/userguide/worker.html). We highly recommend keeping your [Amazon Machine Image (AMI)](https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html) versions up-to-date for security reasons. Older kubelet versions might pose security risks due to potential Common Vulnerabilities and Exposures (CVEs), which could outweigh the benefits of using older kubelet versions.
-* **Kubernetes < v1.28** — If you are using a version older than v1.28, the supported skew between the API server and the kubelet is n-2. For example, if your EKS version is 1.27, the oldest kubelet version you can use is 1.25. This version skew is applicable across [AWS Fargate](https://docs.aws.amazon.com/eks/latest/userguide/fargate.html), [managed node groups](https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html), and [self-managed nodes](https://docs.aws.amazon.com/eks/latest/userguide/worker.html).
+* **Kubernetes v1.28+** — **** Starting from Kubernetes version 1.28 and onwards, there's a more lenient version policy for core components. Specifically, the supported skew between the Kubernetes API server and the kubelet has been extended by one minor version, going from n-2 to n-3. For example, if your EKS control plane version is 1.28, you can safely use kubelet versions as old as 1.25. This version skew is supported across https://docs.aws.amazon.com/eks/latest/userguide/fargate.html[AWS Fargate], https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html[managed node groups], and https://docs.aws.amazon.com/eks/latest/userguide/worker.html[self-managed nodes]. We highly recommend keeping your https://docs.aws.amazon.com/eks/latest/userguide/eks-optimized-amis.html[Amazon Machine Image (AMI)] versions up-to-date for security reasons. Older kubelet versions might pose security risks due to potential Common Vulnerabilities and Exposures (CVEs), which could outweigh the benefits of using older kubelet versions.
+* **Kubernetes < v1.28** — If you are using a version older than v1.28, the supported skew between the API server and the kubelet is n-2. For example, if your EKS version is 1.27, the oldest kubelet version you can use is 1.25. This version skew is applicable across https://docs.aws.amazon.com/eks/latest/userguide/fargate.html[AWS Fargate], https://docs.aws.amazon.com/eks/latest/userguide/managed-node-groups.html[managed node groups], and https://docs.aws.amazon.com/eks/latest/userguide/worker.html[self-managed nodes].
 
 ## Enable node expiry for Karpenter managed nodes
 
-One way Karpenter implements node upgrades is using the concept of node expiry. This reduces the planning required for node upgrades. When you set a value for **ttlSecondsUntilExpired **in your provisioner, this activates node expiry. After nodes reach the defined age in seconds, they’re safely drained and deleted. This is true even if they’re in use, allowing you to replace nodes with newly provisioned upgraded instances. When a node is replaced, Karpenter uses the latest EKS-optimized AMIs. For more information, see [Deprovisioning](https://karpenter.sh/docs/concepts/deprovisioning/#methods) on the Karpenter website.
+One way Karpenter implements node upgrades is using the concept of node expiry. This reduces the planning required for node upgrades. When you set a value for **ttlSecondsUntilExpired **in your provisioner, this activates node expiry. After nodes reach the defined age in seconds, they’re safely drained and deleted. This is true even if they’re in use, allowing you to replace nodes with newly provisioned upgraded instances. When a node is replaced, Karpenter uses the latest EKS-optimized AMIs. For more information, see https://karpenter.sh/docs/concepts/deprovisioning/#methods[Deprovisioning] on the Karpenter website.
 
-Karpenter doesn’t automatically add jitter to this value. To prevent excessive workload disruption, define a [pod disruption budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/), as shown in Kubernetes documentation.
+Karpenter doesn’t automatically add jitter to this value. To prevent excessive workload disruption, define a https://kubernetes.io/docs/tasks/run-application/configure-pdb/[pod disruption budget], as shown in Kubernetes documentation.
 
 If you configure **ttlSecondsUntilExpired **on a provisioner, this applies to existing nodes associated with the provisioner.
 
 ## Use Drift feature for Karpenter managed nodes
 
-[Karpenter's Drift feature](https://karpenter.sh/docs/concepts/deprovisioning/#drift) can automatically upgrade the Karpenter-provisioned nodes to stay in-sync with the EKS control plane. Karpenter Drift currently needs to be enabled using a [feature gate](https://karpenter.sh/docs/concepts/settings/#feature-gates). Karpenter's default configuration uses the latest EKS-Optimized AMI for the same major and minor version as the EKS cluster's control plane.
+https://karpenter.sh/docs/concepts/deprovisioning/#drift[Karpenter's Drift feature] can automatically upgrade the Karpenter-provisioned nodes to stay in-sync with the EKS control plane. Karpenter Drift currently needs to be enabled using a https://karpenter.sh/docs/concepts/settings/#feature-gates[feature gate]. Karpenter's default configuration uses the latest EKS-Optimized AMI for the same major and minor version as the EKS cluster's control plane.
 
-After an EKS Cluster upgrade completes, Karpenter's Drift feature will detect that the Karpenter-provisioned nodes are using EKS-Optimized AMIs for the previous cluster version, and automatically cordon, drain, and replace those nodes. To support pods moving to new nodes, follow Kubernetes best practices by setting appropriate pod [resource quotas](https://kubernetes.io/docs/concepts/policy/resource-quotas/), and using [pod disruption budgets](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) (PDB). Karpenter's deprovisioning will pre-spin up replacement nodes based on the pod resource requests, and will respect the PDBs when deprovisioning nodes.
+After an EKS Cluster upgrade completes, Karpenter's Drift feature will detect that the Karpenter-provisioned nodes are using EKS-Optimized AMIs for the previous cluster version, and automatically cordon, drain, and replace those nodes. To support pods moving to new nodes, follow Kubernetes best practices by setting appropriate pod https://kubernetes.io/docs/concepts/policy/resource-quotas/[resource quotas], and using https://kubernetes.io/docs/concepts/workloads/pods/disruptions/[pod disruption budgets] (PDB). Karpenter's deprovisioning will pre-spin up replacement nodes based on the pod resource requests, and will respect the PDBs when deprovisioning nodes.
 
 ## Use eksctl to automate upgrades for self-managed node groups
 
 Self managed node groups are EC2 instances that were deployed in your account and attached to the cluster outside of the EKS service. These are usually deployed and managed by some form of automation tooling. To upgrade self-managed node groups you should refer to your tools documentation.
 
-For example, eksctl supports [deleting and draining self-managed nodes.](https://eksctl.io/usage/managing-nodegroups/#deleting-and-draining) 
+For example, eksctl supports https://eksctl.io/usage/managing-nodegroups/#deleting-and-draining[deleting and draining self-managed nodes.] 
 
 Some common tools include:
 
-* [eksctl](https://eksctl.io/usage/nodegroup-upgrade/)
-* [kOps](https://kops.sigs.k8s.io/operations/updates_and_upgrades/)
-* [EKS Blueprints](https://aws-ia.github.io/terraform-aws-eks-blueprints/node-groups/#self-managed-node-groups)
+* https://eksctl.io/usage/nodegroup-upgrade/[eksctl]
+* https://kops.sigs.k8s.io/operations/updates_and_upgrades/[kOps]
+* https://aws-ia.github.io/terraform-aws-eks-blueprints/node-groups/#self-managed-node-groups[EKS Blueprints]
 
 ## Backup the cluster before upgrading
 
 New versions of Kubernetes introduce significant changes to your Amazon EKS cluster. After you upgrade a cluster, you can’t downgrade it.
 
-[Velero](https://velero.io/) is an community supported open-source tool that can be used to take backups of existing clusters and apply the backups to a new cluster.
+https://velero.io/[Velero] is an community supported open-source tool that can be used to take backups of existing clusters and apply the backups to a new cluster.
 
 Note that you can only create new clusters for Kubernetes versions currently supported by EKS. If the version your cluster is currently running is still supported and an upgrade fails, you can create a new cluster with the original version and restore the data plane. Note that AWS resources, including IAM, are not included in the backup by Velero. These resources would need to be recreated. 
 
@@ -519,8 +519,8 @@ With high degrees of automation and declarative systems like GitOps, this may be
 
 Review these blogs posts for more information:
 
-* [Kubernetes cluster upgrade: the blue-green deployment strategy](https://aws.amazon.com/blogs/containers/kubernetes-cluster-upgrade-the-blue-green-deployment-strategy/)
-* [Blue/Green or Canary Amazon EKS clusters migration for stateless ArgoCD workloads](https://aws.amazon.com/blogs/containers/blue-green-or-canary-amazon-eks-clusters-migration-for-stateless-argocd-workloads/)
+* https://aws.amazon.com/blogs/containers/kubernetes-cluster-upgrade-the-blue-green-deployment-strategy/[Kubernetes cluster upgrade: the blue-green deployment strategy]
+* https://aws.amazon.com/blogs/containers/blue-green-or-canary-amazon-eks-clusters-migration-for-stateless-argocd-workloads/[Blue/Green or Canary Amazon EKS clusters migration for stateless ArgoCD workloads]
 
 ## Track planned major changes in the Kubernetes project — Think ahead
 
@@ -528,7 +528,7 @@ Don’t look only at the next version. Review new versions of Kubernetes as they
  
 Review all documented changes for the version that you’re upgrading to, and note any required upgrade steps. Also, note any requirements or procedures that are specific to Amazon EKS managed clusters.
 
-* [Kubernetes changelog](https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG)
+* https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG[Kubernetes changelog]
 
 ## Specific Guidance on Feature Removals
 
@@ -536,31 +536,31 @@ Review all documented changes for the version that you’re upgrading to, and no
 
 The EKS Optimized AMI for 1.25 no longer includes support for Dockershim. If you have a dependency on Dockershim, e.g. you are mounting the Docker socket, you will need to remove those dependencies before upgrading your worker nodes to 1.25. 
 
-Find instances where you have a dependency on the Docker socket before upgrading to 1.25. We recommend using [Detector for Docker Socket (DDS), a kubectl plugin.](https://github.com/aws-containers/kubectl-detector-for-docker-socket). 
+Find instances where you have a dependency on the Docker socket before upgrading to 1.25. We recommend using https://github.com/aws-containers/kubectl-detector-for-docker-socket[Detector for Docker Socket (DDS), a kubectl plugin.]. 
 
 ### Removal of PodSecurityPolicy in 1.25 - Migrate to Pod Security Standards or a policy-as-code solution
 
-`PodSecurityPolicy` was [deprecated in Kubernetes 1.21](https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/), and has been removed in Kubernetes 1.25. If you are using PodSecurityPolicy in your cluster, then you must migrate to the built-in Kubernetes Pod Security Standards (PSS) or to a policy-as-code solution before upgrading your cluster to version 1.25 to avoid interruptions to your workloads. 
+`PodSecurityPolicy` was https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[deprecated in Kubernetes 1.21], and has been removed in Kubernetes 1.25. If you are using PodSecurityPolicy in your cluster, then you must migrate to the built-in Kubernetes Pod Security Standards (PSS) or to a policy-as-code solution before upgrading your cluster to version 1.25 to avoid interruptions to your workloads. 
 
-AWS published a [detailed FAQ in the EKS documentation.](https://docs.aws.amazon.com/eks/latest/userguide/pod-security-policy-removal-faq.html)
+AWS published a https://docs.aws.amazon.com/eks/latest/userguide/pod-security-policy-removal-faq.html[detailed FAQ in the EKS documentation.]
 
-Review the [Pod Security Standards (PSS) and Pod Security Admission (PSA)](https://aws.github.io/aws-eks-best-practices/security/docs/pods/#pod-security-standards-pss-and-pod-security-admission-psa) best practices. 
+Review the https://aws.github.io/aws-eks-best-practices/security/docs/pods/#pod-security-standards-pss-and-pod-security-admission-psa[Pod Security Standards (PSS) and Pod Security Admission (PSA)] best practices. 
 
-Review the [PodSecurityPolicy Deprecation blog post](https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/) on the Kubernetes website.
+Review the https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[PodSecurityPolicy Deprecation blog post] on the Kubernetes website.
 
 ### Deprecation of In-Tree Storage Driver in 1.23 - Migrate to Container Storage Interface (CSI) Drivers
 
-The Container Storage Interface (CSI) was designed to help Kubernetes replace its existing, in-tree storage driver mechanisms. The Amazon EBS container storage interface (CSI) migration feature is enabled by default in Amazon EKS `1.23` and later clusters. If you have pods running on a version `1.22` or earlier cluster, then you must install the [Amazon EBS CSI driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) before updating your cluster to version `1.23` to avoid service interruption. 
+The Container Storage Interface (CSI) was designed to help Kubernetes replace its existing, in-tree storage driver mechanisms. The Amazon EBS container storage interface (CSI) migration feature is enabled by default in Amazon EKS `1.23` and later clusters. If you have pods running on a version `1.22` or earlier cluster, then you must install the https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html[Amazon EBS CSI driver] before updating your cluster to version `1.23` to avoid service interruption. 
 
-Review the [Amazon EBS CSI migration frequently asked questions](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi-migration-faq.html).
+Review the https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi-migration-faq.html[Amazon EBS CSI migration frequently asked questions].
 
 ## Additional Resources
 
 ### ClowdHaus EKS Upgrade Guidance
 
-[ClowdHaus EKS Upgrade Guidance](https://clowdhaus.github.io/eksup/) is a CLI to aid in upgrading Amazon EKS clusters. It can analyze a cluster for any potential issues to remediate prior to upgrade. 
+https://clowdhaus.github.io/eksup/[ClowdHaus EKS Upgrade Guidance] is a CLI to aid in upgrading Amazon EKS clusters. It can analyze a cluster for any potential issues to remediate prior to upgrade. 
 
 ### GoNoGo
 
-[GoNoGo](https://github.com/FairwindsOps/GoNoGo) is an alpha-stage tool to determine the upgrade confidence of your cluster add-ons. 
+https://github.com/FairwindsOps/GoNoGo[GoNoGo] is an alpha-stage tool to determine the upgrade confidence of your cluster add-ons. 
 
