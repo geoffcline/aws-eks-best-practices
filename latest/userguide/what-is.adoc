@@ -11,42 +11,32 @@
 :idseparator: -
 :sourcedir: .
 :info_doctype: chapter
-:info_title: What is Amazon EKS?
-:info_abstract: Learn about Amazon EKS, a service that...
+:info_title: What is the EKS Best Pracitces Guide?
+:info_abstract: What is the EKS Best Pracitces Guide?
 
 [abstract]
 --
-Learn about Amazon EKS, a service that...
+What is the EKS Best Pracitces Guide?
 --
+# Introduction
+Welcome to the EKS Best Practices Guides.  The primary goal of this project is to offer a set of best practices for day 2 operations for Amazon EKS. We elected to publish this guidance to GitHub so we could iterate quickly, provide timely and effective recommendations for variety of concerns, and easily incorporate suggestions from the broader community.  
 
-Amazon EKS is... Describe what your service is and how customers can use it.
+We currently have published guides for the following topics: 
 
-[.topiclist]
-[[Topic List]]
+* <<cluster-upgrades,Best Practices for Cluster Upgrades>>
 
-[[first-time-user,first-time-user.title]]
-== Are you a first-time Amazon EKS user?
+We also open sourced a Python based CLI (Command Line Interface) called https://github.com/aws-samples/hardeneks[hardeneks] to check some of the recommendations from this guide.
 
-If you are a first-time user of Amazon EKS, we recommend that you begin by reading the following sections:
+In the future we will be publishing best practices guidance for performance, cost optimization, and operational excellence. 
 
+## Related guides
+In addition to the https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html[EKS User Guide], AWS has published several other guides that may help you with your implementation of EKS.
 
+* https://aws.github.io/aws-emr-containers-best-practices/[EMR Containers Best Practices Guides]
+* https://awslabs.github.io/data-on-eks/[Data on EKS]
+* https://aws-observability.github.io/observability-best-practices/[AWS Observability Best Practices]
+* https://aws-ia.github.io/terraform-aws-eks-blueprints/[Amazon EKS Blueprints for Terraform]
+* https://aws-quickstart.github.io/cdk-eks-blueprints/[Amazon EKS Blueprints Quick Start]
 
-* Text
-* Text
-* Text
-
-
-[[servicename-feature-overview,servicename-feature-overview.title]]
-== Features of Amazon EKS
-
-Include a brief but descriptive list of service features. If you need to go into more depth on a feature, consider adding a How It Works conceptual topic.
-
-[[related-services,related-services.title]]
-== Related services
-
-Offer a list of related services complete with links to the best place to start for each service. Briefly explain how the service is related. If you don't have any, remove this section.
-
-[[acessing-servicename,acessing-servicename.title]]
-== Accessing Amazon EKS
-
-Briefly explain the different ways to gain access to the service, whether by console, CLI, or API.
+## Contributing
+We encourage you to contribute to these guides. If you have implemented a practice that has proven to be effective, please share it with us by opening an issue or a pull request. Similarly, if you discover an error or flaw in the guidance we've already published, please submit a PR to correct it. The guidelines for submitting PRs can be found in our https://github.com/aws/aws-eks-best-practices/blob/master/CONTRIBUTING.md[Contributing Guidelines].
