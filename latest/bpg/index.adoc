@@ -28,26 +28,30 @@ community.
 
 ## What is AsciiDoc?
 
-AsciiDoc is a lightwieght markup language used for writing documentaion, articles, books, and more. It allows authors to create plain text documments with simple and readable syntax that can be converted into various formats, such as HTML, PDF, and DocBook. AsciiDoc is particulary popular in technical writing and software development due to its support for the following elements:
+AsciiDoc is a lightweight markup language used for writing documentation, articles, books, and more. It allows authors to create plain text documents with simple and readable syntax that can be converted into various formats, such as HTML, PDF, and DocBook. AsciiDoc is particularly popular in technical writing and software development due to its support for the following elemetns:
 
-* Code bocks
+
+* Code blcoks
 * Tables
-* Lsits
+* Lists
 * Images
-* Footnoots
+* Footnotes
 
-The language's flexibility and ease of use make it a preferred choice for creating structured and well-formatted contet.
+The language's flexibility and ease of use make it a preferred choice for creating structured and well-formatted content.
+
 
 ## What is GitHub?
 
-GitHub is a web-based platform that provides version contorl and collaborative tools for software development projects. It is built around Git, a distributed version control system that allows multiple developers to work on a project simultaneosly without overwriting each other's changes. GitHub offers a range of featuers, including:
+GitHub is a web-based platform that provides version control and collaborative tools for software development projects. It is built around Git, a distributed version control system that allows multiple developers to work on a project simultaneously without overwriting each other's changes. GitHub offers a range of feaures, including:
+
 
 * Issue tracking
-* Project managemnt
-* Code revieew
-* Continuous intregration
+* Project management
+* Code review
+* Continuous integration
 
-These features help streamline the development process and enhance collaboration among team members. GitHub also hosts open-source projects, enabling developers to contribute to and benefit from a vast repositry of shared code and resources.
+These features help streamline the development process and enhance collaboration among team members. GitHub also hosts open-source projects, enabling developers to contribute to and benefit from a vast repository of shared code and resources.
+
 
 
 We currently have published guides for the following topics:
